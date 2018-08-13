@@ -14,11 +14,32 @@
   font-size: 1.5em;
 }
 
-.App-intro {
+.Messages {
+  padding-left:80px;
+  padding-right:80px;
   font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.Username {
+  padding-right: 10px;
+  font-weight:bold;
+}
+
+.Footer {
+  height:50px;
+}
+
+input, button{border:none;}
+
+.Footer input{
+  height:40px;
+  text-indent:10px;
+  width:75%;
+}
+
+.Footer button{
+  background-color:#0260ee;
+  color:white;
+  height:40px;
+  width:25%;
 }

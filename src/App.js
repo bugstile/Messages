@@ -1,22 +1,40 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {Messages} from './Messages.js';
+import {Footer} from './Footer.js';
 
 class App extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+        status: false
+    }
+  }
+
+  myCallback = (data) => {
+    this.setState({status: data}, function(){
+      this.foo.parentRefresh(this.state.status);
+    })
+  }
+
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <div className="Messages">
-        
-        </div>
+
+    return <div className="App">
+      <header className="App-header">
+        <h1 className="App-title">Welcome to Storytel</h1>
+      </header>
+
+      <div className="Messages">
+        {/* <Messages status={this.state.status} /> */}
+        <Messages ref={
+            foo => {
+              this.foo = foo;
+            }
+          } />
+        <Footer callbackFromParent={this.myCallback.bind(this)}/>
       </div>
-    );
+    </div>
   }
 }
 
