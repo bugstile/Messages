@@ -1,40 +1,55 @@
-import React, { Component } from 'react';
-import './App.css';
-import {Messages} from './Messages.js';
-import {Footer} from './Footer.js';
+import React, { Component } from "react";
+import "./App.css";
+import { Messages } from "./Messages.js";
+import { Send } from "./Send.js";
+import { Welcome } from "./Welcome.js";
 
 class App extends Component {
-
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-        status: false
-    }
+      status: false
+    };
   }
 
-  myCallback = (data) => {
-    this.setState({status: data}, function(){
-      this.foo.parentRefresh(this.state.status);
-    })
-  }
+  updatingData = data => {
+    this.setState({ status: data }, () => {
+      this.msg.parentRefresh(this.state.status);
+    });
+  };
+
+  whoIsTheAuthor = data => {
+    this.setState({ author: data });
+  };
+
+  editingMessage = data => {
+    this.ftr.editingMessage(data);
+  };
 
   render() {
-
-    return <div className="App">
-      <header className="App-header">
-        <h1 className="App-title">Welcome to Storytel</h1>
-      </header>
-
-      <div className="Messages">
-        {/* <Messages status={this.state.status} /> */}
-        <Messages ref={
-            foo => {
-              this.foo = foo;
-            }
-          } />
-        <Footer callbackFromParent={this.myCallback.bind(this)}/>
+    return (
+      <div className="App">
+        <Welcome callbackFromParent={this.whoIsTheAuthor.bind(this)} />
+        <div className="Messages">
+          <Send
+            author={this.state.author}
+            callbackFromParent={this.updatingData.bind(this)}
+            ref={data => {
+              this.ftr = data;
+            }}
+          />
+          <div className="Content">
+            <Messages
+              author={this.state.author}
+              editingMessage={this.editingMessage}
+              ref={data => {
+                this.msg = data;
+              }}
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    );
   }
 }
 
