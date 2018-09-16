@@ -88,7 +88,7 @@ export class Send extends Component {
     let details = {
       message: this.state.message
     };
-    let url = "https://5b6c5f2bc06fb600146274d8.mockapi.io/storytel/messages/";
+    let url = "http://localhost:3000/result/";
 
     if (!this.state.editing) {
       details.author = this.props.author;

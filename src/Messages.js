@@ -47,14 +47,14 @@ export class Messages extends Component {
 
   fetchMessages() {
     return fetch(
-      "https://5b6c5f2bc06fb600146274d8.mockapi.io/storytel/messages/"
+      "http://localhost:3000/result/"
     )
       .then(response => response.json())
       .then(data => {
         document.getElementById("newMessage").classList.add("Hide");
         document.getElementById("newMessage").classList.remove("Display");
         this.setState({
-          data: data.result.reverse()
+          data: data.reverse()
         });
       })
       .catch(error => {
@@ -76,7 +76,7 @@ export class Messages extends Component {
     let something = "msg" + props.target.parentElement.id;
     document.getElementById(something).style.display = "none";
     return fetch(
-      "https://5b6c5f2bc06fb600146274d8.mockapi.io/storytel/messages/" +
+      "http://localhost:3000/result/" +
         props.target.parentElement.id,
       {
         method: "DELETE",
