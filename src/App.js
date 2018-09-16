@@ -3,6 +3,7 @@ import "./App.css";
 import { Messages } from "./Messages.js";
 import { Send } from "./Send.js";
 import { Welcome } from "./Welcome.js";
+import { Loader } from "./Loader.js";
 
 class App extends Component {
   constructor(props) {
@@ -38,7 +39,8 @@ class App extends Component {
               this.ftr = data;
             }}
           />
-          <div className="Content">
+          <div id="Content" className="Content">
+            <Loader id="newMessage" className="Hide"/>
             <Messages
               author={this.state.author}
               editingMessage={this.editingMessage}

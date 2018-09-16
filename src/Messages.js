@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Loader } from "./Loader.js";
 
 function Actions(props) {
   if (props.currentAuthor === props.author) {
@@ -50,6 +51,8 @@ export class Messages extends Component {
     )
       .then(response => response.json())
       .then(data => {
+        document.getElementById("newMessage").classList.add("Hide");
+        document.getElementById("newMessage").classList.remove("Display");
         this.setState({
           data: data.result.reverse()
         });
@@ -130,13 +133,7 @@ export class Messages extends Component {
         />
       ));
     } else {
-      return (
-        <div className="MessageContainer">
-          <div className="MessageContent">
-            <div className="loader">Loading...</div>
-          </div>
-        </div>
-      );
+      return <Loader />;
     }
   }
 }

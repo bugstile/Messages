@@ -7,7 +7,6 @@ export class Send extends Component {
       message: "",
       author: "50000",
       sent: false,
-      sendable: false,
       editing: false
     };
     this.handleChange = this.handleChange.bind(this);
@@ -35,18 +34,24 @@ export class Send extends Component {
 
   handleKeyPress = event => {
     if (event.key === "Enter") {
-      this.handleSubmit(event);
+      if (this.messageEvaluation(this.state.message)) {
+        this.handleSubmit(event);
+      }
     }
   };
 
   messageEvaluation(message) {
     if (message.length > 255) {
-      this.setState({ sendable: false });
+      console.log("too long");
       return false;
-    } else {
-      this.setState({ sendable: true });
-      return true;
     }
+
+    if (message.length === 0) {
+      console.log("too short");
+      return false;
+    }
+
+    return true;
   }
 
   handleChange(event) {
@@ -65,68 +70,83 @@ export class Send extends Component {
 
   resetSubmissions() {
     document.getElementById("input").value = "";
-    document.getElementById("submit").removeAttribute("disabled");
+  }
+
+  blurIt() {
+    document.getElementById("coverInput").innerHTML = document.getElementById(
+      "input"
+    ).value;
+    document.getElementById("input").value = " ";
+    document.getElementById("coverInput").classList.add("slide-out-right");
+    setTimeout(() => {
+      document.getElementById("coverInput").classList.remove("slide-out-right");
+      document.getElementById("coverInput").innerHTML = "";
+    }, 500);
   }
 
   handleSubmit() {
-    if (this.state.sendable) {
-      let details = {
-        message: this.state.message
-      };
-      let url =
-        "https://5b6c5f2bc06fb600146274d8.mockapi.io/storytel/messages/";
+    let details = {
+      message: this.state.message
+    };
+    let url = "https://5b6c5f2bc06fb600146274d8.mockapi.io/storytel/messages/";
 
-      if (!this.state.editing) {
-        details.author = this.props.author;
-        return fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-          },
-          body: this.formBody(details)
-        })
-          .then(response =>
-            response.json().then(() => {
-              this.setState({
-                message: "",
-                author: this.props.author
-              });
-              this.props.callbackFromParent(true);
-              this.resetSubmissions();
-            })
-          )
-          .catch(error => {
-            console.error(error);
-          });
-      } else {
-        return fetch(url + this.state.messageID, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-          },
-          body: this.formBody(details)
-        })
-          .then(response =>
-            response.json().then(() => {
-              this.setState({
-                message: "",
-                author: this.props.author,
-                editing: false
-              });
-              this.props.callbackFromParent(true);
-              this.resetSubmissions();
-            })
-          )
-          .catch(error => {
-            console.error(error);
-          });
-      }
+    if (!this.state.editing) {
+      details.author = this.props.author;
+      return fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body: this.formBody(details)
+      })
+        .then(response =>
+          response.json().then(() => {
+            document.getElementById("newMessage").classList.remove("Hide");
+            document.getElementById("newMessage").classList.add("Display");
+            this.blurIt();
+            this.setState({
+              message: "",
+              author: this.props.author,
+              editing: false
+            });
+            this.props.callbackFromParent(true);
+            this.resetSubmissions();
+          })
+        )
+        .catch(error => {
+          console.error(error);
+        });
+    } else {
+      return fetch(url + this.state.messageID, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body: this.formBody(details)
+      })
+        .then(response =>
+          response.json().then(() => {
+            document.getElementById("newMessage").classList.remove("Hide");
+            document.getElementById("newMessage").classList.add("Display");
+            this.setState({
+              message: "",
+              author: this.props.author,
+              editing: false
+            });
+            this.props.callbackFromParent(true);
+            this.resetSubmissions();
+          })
+        )
+        .catch(error => {
+          console.error(error);
+        });
     }
   }
 
   render() {
     return (
       <div className="Send">
+        <span id="coverInput" />
         <input
           id="input"
           type="text"
