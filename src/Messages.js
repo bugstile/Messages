@@ -36,8 +36,6 @@ export class Messages extends Component {
     this.state = {
       data: [],
       loaded: false,
-      currentHover: "",
-      displayActions: false,
       editing: false
     };
 
@@ -46,9 +44,7 @@ export class Messages extends Component {
   }
 
   fetchMessages() {
-    return fetch(
-      "http://localhost:3000/result/"
-    )
+    return fetch("http://localhost:3000/result/")
       .then(response => response.json())
       .then(data => {
         document.getElementById("newMessage").classList.add("Hide");
@@ -65,7 +61,7 @@ export class Messages extends Component {
   handleEdit(props) {
     this.setState({ editing: true });
     let details = this.state.data.find(
-      item => item.id === props.target.parentElement.id
+      item => item.id === parseInt(props.target.parentElement.id, 10)
     );
     details.bool = true;
     this.props.editingMessage(details);
@@ -76,8 +72,7 @@ export class Messages extends Component {
     let something = "msg" + props.target.parentElement.id;
     document.getElementById(something).style.display = "none";
     return fetch(
-      "http://localhost:3000/result/" +
-        props.target.parentElement.id,
+      "http://localhost:3000/result/" + props.target.parentElement.id,
       {
         method: "DELETE",
         headers: {
@@ -103,7 +98,7 @@ export class Messages extends Component {
     }
   }
 
-  parentRefresh(props) {
+  refreshMessages(props) {
     if (props) {
       this.setState({ loaded: props }, function() {
         this.fetchMessages();
@@ -121,8 +116,6 @@ export class Messages extends Component {
     if (this.state.loaded) {
       return this.state.data.map(e => (
         <Message
-          displayActions={this.hideActions}
-          hideActions={this.revealActions}
           onEdit={this.handleEdit}
           onRemove={this.handleRemove}
           currentAuthor={this.props.author}

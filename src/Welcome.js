@@ -22,7 +22,7 @@ export class Welcome extends Component {
     }
     this.setState({ author: id }, () => {
       this.setState({ loading: false });
-      this.props.callbackFromParent(this.state.author);
+      this.props.setAuthor(this.state.author);
     });
   }
 

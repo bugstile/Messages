@@ -13,13 +13,13 @@ class App extends Component {
     };
   }
 
-  updatingData = data => {
+  sendingMessage = data => {
     this.setState({ status: data }, () => {
-      this.msg.parentRefresh(this.state.status);
+      this.msg.refreshMessages(this.state.status);
     });
   };
 
-  whoIsTheAuthor = data => {
+  setAuthor = data => {
     this.setState({ author: data });
   };
 
@@ -30,17 +30,20 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Welcome callbackFromParent={this.whoIsTheAuthor.bind(this)} />
+        <Welcome setAuthor={this.setAuthor.bind(this)} />
         <div className="Messages">
           <Send
             author={this.state.author}
-            callbackFromParent={this.updatingData.bind(this)}
+            Sent={this.sendingMessage.bind(this)}
             ref={data => {
               this.ftr = data;
             }}
           />
           <div id="Content" className="Content">
-            <Loader id="newMessage" className="Hide"/>
+            <div id="Error" className="MessageContainer Hide">
+              <div className="MessageContent Error" id="ErrorMessage" />
+            </div>
+            <Loader id="newMessage" className="Hide" />
             <Messages
               author={this.state.author}
               editingMessage={this.editingMessage}

@@ -1,3 +1,9 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
 html,
 body,
 #root {
@@ -9,6 +15,12 @@ body,
   min-height: 100%;
   background-color: #e6ecf0;
   height: auto;
+}
+
+.Error {
+  background-color: #ffc4c4;
+  font-size: 20px;
+  text-align: center;
 }
 
 body {
@@ -42,9 +54,8 @@ p {
 .Messages {
   max-width: 855px;
   min-width: 350px;
-  /*   padding: 15px 15px 15px 15px; */
   display: grid;
-  grid-template-rows: 60px auto;
+  grid-template-rows: auto auto;
   overflow-x: hidden;
 }
 
@@ -71,12 +82,6 @@ p {
   display: grid;
   grid-template-columns: auto 70px;
   text-align: right;
-}
-
-.top-title {
-  padding: 15px 20px 20px 20px;
-  font-size: 20px;
-  letter-spacing: 0.04em;
 }
 
 .MessageContainer {
@@ -143,6 +148,12 @@ input::placeholder {
 
 input:focus::placeholder {
   color: #c3c3c3;
+}
+
+.Editing {
+  font-size: 12px;
+  padding: 6px 0px 0px 5px;
+  color: #636f7b;
 }
 
 .loader {

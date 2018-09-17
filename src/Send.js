@@ -22,6 +22,8 @@ export class Send extends Component {
           messageID: props.id
         },
         () => {
+          document.getElementById("editing").classList.remove("Hide");
+          document.getElementById("editing").classList.add("Display");
           document.getElementById("input").value = props.message;
         }
       );
@@ -34,23 +36,46 @@ export class Send extends Component {
 
   handleKeyPress = event => {
     if (event.key === "Enter") {
-      if (this.messageEvaluation(this.state.message)) {
+      if (this.messageEvaluation(event.target.value)) {
         this.handleSubmit(event);
       }
     }
   };
 
+  handleKeyUp = event => {
+    if (event.key === "Escape" && this.state.editing) {
+      this.setState({ editing: false, message: "", messageID: "" });
+      document.getElementById("input").value = "";
+      document.getElementById("editing").classList.remove("Display");
+      document.getElementById("editing").classList.add("Hide");
+    }
+  };
+
   messageEvaluation(message) {
+    function handleErrorPresentation(error) {
+      document.getElementById("ErrorMessage").innerHTML = error;
+      document.getElementById("Error").classList.remove("Hide");
+      document.getElementById("Error").classList.add("Display");
+    }
+
     if (message.length > 255) {
-      console.log("too long");
+      handleErrorPresentation("Message is too long (" + message.length + ")");
       return false;
     }
 
     if (message.length === 0) {
-      console.log("too short");
+      document.getElementById("Error").classList.remove("Display");
+      document.getElementById("Error").classList.add("Hide");
       return false;
     }
 
+    if (message.trim().length === 0) {
+      handleErrorPresentation("Message can't be empty");
+      return false;
+    }
+
+    document.getElementById("Error").classList.remove("Display");
+    document.getElementById("Error").classList.add("Hide");
     return true;
   }
 
@@ -72,7 +97,7 @@ export class Send extends Component {
     document.getElementById("input").value = "";
   }
 
-  blurIt() {
+  playAnimation() {
     document.getElementById("coverInput").innerHTML = document.getElementById(
       "input"
     ).value;
@@ -86,12 +111,12 @@ export class Send extends Component {
 
   handleSubmit() {
     let details = {
-      message: this.state.message
+      message: this.state.message,
+      author: this.props.author
     };
     let url = "http://localhost:3000/result/";
 
     if (!this.state.editing) {
-      details.author = this.props.author;
       return fetch(url, {
         method: "POST",
         headers: {
@@ -103,13 +128,13 @@ export class Send extends Component {
           response.json().then(() => {
             document.getElementById("newMessage").classList.remove("Hide");
             document.getElementById("newMessage").classList.add("Display");
-            this.blurIt();
+            this.playAnimation();
             this.setState({
               message: "",
               author: this.props.author,
               editing: false
             });
-            this.props.callbackFromParent(true);
+            this.props.Sent(true);
             this.resetSubmissions();
           })
         )
@@ -117,6 +142,7 @@ export class Send extends Component {
           console.error(error);
         });
     } else {
+      details.id = parseInt(this.state.messageID, 10);
       return fetch(url + this.state.messageID, {
         method: "PUT",
         headers: {
@@ -133,7 +159,9 @@ export class Send extends Component {
               author: this.props.author,
               editing: false
             });
-            this.props.callbackFromParent(true);
+            document.getElementById("editing").classList.remove("Display");
+            document.getElementById("editing").classList.add("Hide");
+            this.props.Sent(true);
             this.resetSubmissions();
           })
         )
@@ -151,11 +179,15 @@ export class Send extends Component {
           id="input"
           type="text"
           value={this.state.value}
+          onKeyUp={this.handleKeyUp}
           onKeyPress={this.handleKeyPress}
           onChange={this.handleChange}
           placeholder="Write your message here..."
           autoComplete="off"
         />
+        <div id="editing" className="Editing Hide">
+          Press Escape to exit editing
+        </div>
       </div>
     );
   }
