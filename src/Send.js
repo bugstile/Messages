@@ -28,9 +28,15 @@ export class Send extends Component {
         }
       );
     } else {
-      this.setState({
-        editing: props.bool
-      });
+      this.setState(
+        {
+          editing: props.bool
+        },
+        () => {
+          document.getElementById("editing").classList.add("Hide");
+          document.getElementById("editing").classList.remove("Display");
+        }
+      );
     }
   }
 
