@@ -13,16 +13,6 @@ export class Send extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  display(id) {
-    document.getElementById(id).classList.remove("Hide");
-    document.getElementById(id).classList.add("Display");
-  }
-
-  hide(id) {
-    document.getElementById(id).classList.remove("Display");
-    document.getElementById(id).classList.add("Hide");
-  }
-
   editingMessage(props) {
     if (props.bool) {
       this.setState(
@@ -32,7 +22,8 @@ export class Send extends Component {
           messageID: props.id
         },
         () => {
-          this.display("editing");
+          document.getElementById("editing").classList.remove("Hide");
+          document.getElementById("editing").classList.add("Display");
           document.getElementById("input").value = props.message;
         }
       );
@@ -42,7 +33,8 @@ export class Send extends Component {
           editing: props.bool
         },
         () => {
-          this.hide("editing");
+          document.getElementById("editing").classList.add("Hide");
+          document.getElementById("editing").classList.remove("Display");
         }
       );
     }
@@ -52,7 +44,6 @@ export class Send extends Component {
     if (event.key === "Enter") {
       if (this.messageEvaluation(event.target.value)) {
         this.handleSubmit(event);
-        this.hide("editing");
       }
     }
   };
@@ -61,21 +52,20 @@ export class Send extends Component {
     if (event.key === "Escape" && this.state.editing) {
       this.setState({ editing: false, message: "", messageID: "" });
       document.getElementById("input").value = "";
-      this.hide("editing");
-      this.messageEvaluation("");
+      document.getElementById("editing").classList.remove("Display");
+      document.getElementById("editing").classList.add("Hide");
     }
   };
 
-  handleErrorPresentation(error) {
-    document.getElementById("ErrorMessage").innerHTML = error;
-    this.display("Error");
-  }
-
   messageEvaluation(message) {
+    function handleErrorPresentation(error) {
+      document.getElementById("ErrorMessage").innerHTML = error;
+      document.getElementById("Error").classList.remove("Hide");
+      document.getElementById("Error").classList.add("Display");
+    }
+
     if (message.length > 255) {
-      this.handleErrorPresentation(
-        "Message is too long (" + message.length + ")"
-      );
+      handleErrorPresentation("Message is too long (" + message.length + ")");
       return false;
     }
 
@@ -86,11 +76,12 @@ export class Send extends Component {
     }
 
     if (message.trim().length === 0) {
-      this.handleErrorPresentation("Message can't be empty");
+      handleErrorPresentation("Message can't be empty");
       return false;
     }
 
-    this.hide("Error");
+    document.getElementById("Error").classList.remove("Display");
+    document.getElementById("Error").classList.add("Hide");
     return true;
   }
 
@@ -124,16 +115,6 @@ export class Send extends Component {
     }, 500);
   }
 
-  setDefaultState() {
-    this.setState({
-      message: "",
-      author: this.props.author,
-      editing: false
-    });
-    this.props.Sent(true);
-    this.resetSubmissions();
-  }
-
   handleSubmit() {
     let details = {
       message: this.state.message,
@@ -151,9 +132,15 @@ export class Send extends Component {
       })
         .then(response =>
           response.json().then(() => {
+            document.getElementById("newMessage").classList.remove("Hide");
+            document.getElementById("newMessage").classList.add("Display");
             this.playAnimation();
-            this.display("newMessage");
-            this.setDefaultState();
+            this.setState({
+              message: "",
+              author: this.props.author,
+              editing: false
+            });
+            this.props.Sent(true);
             this.resetSubmissions();
           })
         )
@@ -171,8 +158,17 @@ export class Send extends Component {
       })
         .then(response =>
           response.json().then(() => {
-            this.setDefaultState();
-            this.hide("newMessage");
+            document.getElementById("newMessage").classList.remove("Hide");
+            document.getElementById("newMessage").classList.add("Display");
+            this.setState({
+              message: "",
+              author: this.props.author,
+              editing: false
+            });
+            document.getElementById("editing").classList.remove("Display");
+            document.getElementById("editing").classList.add("Hide");
+            this.props.Sent(true);
+            this.resetSubmissions();
           })
         )
         .catch(error => {
