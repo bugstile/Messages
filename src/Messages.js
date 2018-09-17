@@ -82,7 +82,9 @@ export class Messages extends Component {
     )
       .then(response => {
         response.json().then(() => {
-          this.setState({ editing: false });
+          this.setState({ editing: false});
+          document.getElementById("input").value = "";
+          document.getElementById("input").focus();
           this.fetchMessages();
           this.props.editingMessage({ bool: false });
         });
